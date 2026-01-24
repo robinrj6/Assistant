@@ -8,10 +8,10 @@ def chat(req: ChatRequest):
     payload = {
         "model": MODEL_NAME,
         "prompt": req.prompt,
-        "stream": False
+        "stream": True
     }
 
-    r = requests.post(OLLAMA_URL, json=payload)
-    r.raise_for_status()
-
-    return ChatResponse(response=r.json()["response"])
+    with requests.post(OLLAMA_URL, json=payload, stream=True) as r:
+        for line in r.iter_lines():
+            if line:
+                yield line.decode("utf-8")

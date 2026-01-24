@@ -8,8 +8,8 @@ app = FastAPI()
 async def root():
     return {"message": "Hello, World!"}
 
-@app.post("/chat/", response_model=ChatResponse)
+@app.post("/chat_stream")
 async def echo_prompt(ChatRequest: ChatRequest):
-    response = chat(ChatRequest).response
-    return {"response": response}
+    response = chat(ChatRequest)
+    return response
 
