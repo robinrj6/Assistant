@@ -1,9 +1,11 @@
 import base64
+import json
 import os
 from io import BytesIO
 from uuid import uuid4
 from typing import Optional
 from fastapi import FastAPI, File, Form, UploadFile, Depends
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from chat import chat
 from sd import sd
@@ -11,7 +13,7 @@ from schemas import ChatRequest, GenerateRequest
 from controlNetCanny import control_net_Canny
 from db.database import engine, get_db
 from db.models import Base
-from db.crud import save_chat_message, get_chat_history, build_ollama_messages
+from db.crud import save_chat_message, get_chat_history, build_ollama_messages,getChatAllHistory
 
 app = FastAPI()
 
@@ -26,6 +28,10 @@ async def get_image_history():
     # Placeholder for image history retrieval logic
     return {"images": []}
 
+@app.get("/chat/history")
+async def get_all_chat_history(db: Session = Depends(get_db)):
+    history = getChatAllHistory(db)
+    return [{"convo_id": msg.convo_id, "role": msg.role, "content": msg.content} for msg in history]
 
 @app.get("/chat/history/{conversation_id}")
 async def get_chat_history(conversation_id: str):
@@ -34,23 +40,33 @@ async def get_chat_history(conversation_id: str):
 
 
 @app.post("/chat")
-async def chat_stream(ChatRequest: ChatRequest):
+async def chat_stream(ChatRequest: ChatRequest, db: Session = Depends(get_db)):
+    convo_id = uuid4().hex
     save_chat_message(
-        db=Depends(get_db),
-        convo_id=ChatRequest.convo_id,
+        db=db,
+        convo_id=convo_id,
         role="user",
         content=ChatRequest.prompt,
     )
-    response = chat(ChatRequest)
     
-    save_chat_message(
-        db=Depends(get_db),
-        convo_id=ChatRequest.convo_id,
-        role="assistant",
-        content=response,
-    )
-    # # Ensure response is serializable
-    return response
+    async def generate_and_save():
+        full_response = ""
+        for chunk in chat(ChatRequest):
+            chunk_data = json.loads(chunk)
+            if "response" in chunk_data:
+                token = chunk_data["response"]
+                full_response += token
+                yield chunk
+        
+        # Save complete response to database after streaming
+        save_chat_message(
+            db=db,
+            convo_id=convo_id,
+            role="assistant",
+            content=full_response,
+        )
+    
+    return StreamingResponse(generate_and_save(), media_type="application/x-ndjson")
 
 @app.post("/images/generate")
 async def controlnetCanny_generate(
