@@ -10,6 +10,16 @@ controlnet_id = "lllyasviel/sd-controlnet-canny"
 base_model_id = "sd-legacy/stable-diffusion-v1-5"
 
 
+def _get_device():
+    """Get the best available device (cuda > mps > cpu)."""
+    if torch.cuda.is_available():
+        return "cuda"
+    elif torch.backends.mps.is_available():
+        return "mps"
+    else:
+        return "cpu"
+
+
 def _prep_canny_image(image_bytes: bytes) -> Image.Image:
     """Decode upload bytes and create a canny-like edge map for ControlNet."""
     image = Image.open(BytesIO(image_bytes)).convert("RGB")
@@ -18,15 +28,16 @@ def _prep_canny_image(image_bytes: bytes) -> Image.Image:
 
 
 def control_net_Canny(generate_request, image_bytes: bytes):
+    device = _get_device()
     controlnet = ControlNetModel.from_pretrained(
         controlnet_id, torch_dtype=torch.float16
     )
     pipe = StableDiffusionControlNetPipeline.from_pretrained(
         base_model_id, controlnet=controlnet, torch_dtype=torch.float16
-    ).to("cuda")
+    ).to(device)
 
     generator: Optional[torch.Generator] = (
-        torch.Generator("cuda").manual_seed(generate_request.seed)
+        torch.Generator(device).manual_seed(generate_request.seed)
         if generate_request.seed is not None
         else None
     )

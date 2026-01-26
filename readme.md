@@ -11,12 +11,16 @@ We use ollama to access any llm for chatting, easy setup is the main reason for 
 3. if version is displayed, then it means success, your parents are proud, fn
 4. next pull the llm model you want to use like this: `ollama pull gemma3:1b`. I'm pulling gemma3:1b model because thats the only one my 8yrs old laptop can handle now, if you are rich pull any bigger models that you like. 
 5. run the model now: `ollama run gemma3:1b`, this starts the chat in terminal, go ahead ask it a question. Also ollama exposes them to `http://localhost:11434/api/generate` which is used in the app for communication to the model. Dont bother going to this url in the browser, you are blocked already, lol
-6. if you pulled any other model, then you should update the line 5 in [chat.py](backend/chat.py). Papa's money, huh?
+6. if you pulled any other model, then you should update the line 5 in [chat.py](backend/chat.py). Papa's money, huh?`
 
 ### To start the project:
-1. Activate python: `source fastapi-env/bin/activate`
-2. change directory to backend and run: `uvicorn main:app --reload`
-3. go to `localhost:8000/docs`
+0. Create a virtual environment of python if needed: `python -m venv .venv` 
+1. Activate python: `source .venv/bin/activate`
+2. Install the packages from requirements.txt: `pip install -r backend/requirements.txt`
+3. `cd backend` and run: `uvicorn main:app --reload`
+4. go to `localhost:8000/docs`
 
+
+Note: the first time you request to generate an image ie; the first time with and without control image, both first times the application will take some time depending on your network bandwidth to download the stable dicffusion and controlNet models. 
 
     ```PS: DON'T get offended by the sarcasm used here, its just for fun or my mood at the time of writing this. I am using my laptop of 8yrs with i7 7th gen, Nvidia GTX 1050 Ti 4GB and 16GB RAM, so I had to use the smallest working models to get this working, if you have a better pc, good for you, try out other bigger models and let me know how it feels to be high up in cloud 9!!!```
