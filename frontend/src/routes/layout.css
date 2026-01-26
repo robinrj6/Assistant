@@ -1,3 +1,21 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+@font-face {
+    font-family: 'Hurmit Nerd Font';
+    src: url('../lib/assets/HurmitNerdFont-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+
+
+
+body {
+    font-family: 'Hurmit Nerd Font', sans-serif;
+    background-color: #1e1e1e;
+    color: red;
+    margin: 1rem;
+}
