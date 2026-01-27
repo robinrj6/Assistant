@@ -1,2 +1,6 @@
-<h1>Hello</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<div class="flex justify-center items-center h-screen flex-col">
+    <h1>Hello</h1>
+    <button on:click={() => window.location.href = '/chat'} class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-4">
+        Chat with me
+    </button>   
+</div>

@@ -20,7 +20,14 @@ We use ollama to access any llm for chatting, easy setup is the main reason for 
 3. `cd backend` and run: `uvicorn main:app --reload`
 4. go to `localhost:8000/docs`
 
+To start frontend : `cd frontend` > `npm install && npm run dev`.
+
 
 Note: the first time you request to generate an image ie; the first time with and without control image, both first times the application will take some time depending on your network bandwidth to download the stable dicffusion and controlNet models. 
 
-    ```PS: DON'T get offended by the sarcasm used here, its just for fun or my mood at the time of writing this. I am using my laptop of 8yrs with i7 7th gen, Nvidia GTX 1050 Ti 4GB and 16GB RAM, so I had to use the smallest working models to get this working, if you have a better pc, good for you, try out other bigger models and let me know how it feels to be high up in cloud 9!!!```
+    `PS: DON'T get offended by the sarcasm used here, its just for fun or my mood at the time of writing this. I am using my laptop of 8yrs with i7 7th gen, Nvidia GTX 1050 Ti 4GB and 16GB RAM, so I had to use the smallest working models to get this working, if you have a better pc, good for you, try out other bigger models and let me know how it feels to be high up in cloud 9!!!`
+
+##### requirements for my GTX 1050 ti
+
+` torch==[2.6.0]
+  torchvision==[0.21.0]`

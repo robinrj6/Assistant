@@ -56,7 +56,8 @@ async def chat_stream(ChatRequest: ChatRequest, db: Session = Depends(get_db)):
             if "response" in chunk_data:
                 token = chunk_data["response"]
                 full_response += token
-                yield chunk
+                # Add a newline so the client can split the NDJSON stream correctly
+                yield chunk + "\n"
         
         # Save complete response to database after streaming
         save_chat_message(
