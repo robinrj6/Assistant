@@ -3,4 +3,7 @@
     <button on:click={() => window.location.href = '/chat'} class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-4">
         Chat with me
     </button>   
+    <button on:click={() => window.location.href = '/imgen'} class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-4">
+        Generate Image
+    </button>   
 </div>

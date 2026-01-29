@@ -79,6 +79,9 @@ async def controlnetCanny_generate(
     Cimage: Optional[UploadFile] = File(None),
 ):
     if use_controlnet:
+        if Cimage is None:
+            return {"error": "ControlNet enabled but no image provided"}
+            
         # Build the generation request from form fields so FastAPI can handle mixed file/form data
         generate_request = GenerateRequest(
             prompt=prompt,
@@ -105,7 +108,7 @@ async def controlnetCanny_generate(
         file_path = os.path.join(output_dir, filename)
         image.save(file_path, format="PNG")
 
-        return {"image_base64": encoded, "file_path": file_path}
+        return {"file_path": file_path}
     
     else:
         generate_request = GenerateRequest(
@@ -130,4 +133,4 @@ async def controlnetCanny_generate(
         file_path = os.path.join(output_dir, filename)
         image.save(file_path, format="PNG")
 
-        return {"image_base64": encoded, "file_path": file_path}
+        return {"file_path": file_path}
