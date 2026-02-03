@@ -4,6 +4,7 @@ import os
 from io import BytesIO
 from uuid import uuid4
 from typing import Optional
+import fastapi
 from fastapi import FastAPI, File, Form, UploadFile, Depends
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
@@ -16,6 +17,7 @@ from backend.db.models import Base
 from backend.db.crud import save_chat_message, get_chat_history, build_ollama_messages,getChatAllHistory
 
 app = FastAPI()
+start = True
 
 Base.metadata.create_all(bind=engine)
 
@@ -40,8 +42,16 @@ async def get_chat_history(conversation_id: str):
 
 
 @app.post("/chat")
-async def chat_stream(ChatRequest: ChatRequest, db: Session = Depends(get_db)):
-    convo_id = uuid4().hex
+async def chat_stream(request: fastapi.Request, ChatRequest: ChatRequest, db: Session = Depends(get_db)):
+    # Debug: log raw request body
+    body = await request.body()
+
+    if ChatRequest.convo_id:
+        convo_id = ChatRequest.convo_id
+    else:
+        convo_id = str(uuid4().hex)
+    
+
     save_chat_message(
         db=db,
         convo_id=convo_id,
@@ -51,6 +61,9 @@ async def chat_stream(ChatRequest: ChatRequest, db: Session = Depends(get_db)):
     
     async def generate_and_save():
         full_response = ""
+        # Yield convo_id first so client can store it
+        yield json.dumps({"convo_id": convo_id}) + "\n"
+        
         for chunk in chat(ChatRequest):
             chunk_data = json.loads(chunk)
             if "response" in chunk_data:

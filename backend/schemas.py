@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 class ChatRequest(BaseModel):
     prompt: str
+    convo_id: Optional[str] = None
 
 class ChatResponse(BaseModel):
     response: str

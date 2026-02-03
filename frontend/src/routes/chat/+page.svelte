@@ -1,22 +1,28 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { Spinner } from "flowbite-svelte";
 
 
 	let messages: string[] = [];
 	let loading = false;
+	let convoId: string | null = null;
 	
 	async function fetchChat(prompt: string) {
 		loading = true;
 		messages = prompt !== 'hello!' ? [...messages,'󱟄 : '+ prompt] : [];
 		let currentMsg = '';
 		
+		const requestBody: any = { prompt };
+		if (convoId) {
+			requestBody.convo_id = convoId;
+		}
+		const bodyStr = JSON.stringify(requestBody);
+		
 		const res = await fetch('/chat', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ prompt })
+			body: bodyStr
 		});
 
 		if (!res.body) { loading = false; return; }
@@ -37,7 +43,10 @@
 				const trimmed = part.trim();
 				if (!trimmed) continue;
 				const obj = JSON.parse(trimmed);
-				if (obj.response) {
+				// Handle convo_id on first message
+				if (obj.convo_id) {
+					convoId = obj.convo_id;
+				} else if (obj.response) {
 					currentMsg += obj.response;
 				}
 			}
@@ -46,17 +55,17 @@
 		// Flush any remaining buffered data
 		if (buffer.trim()) {
 			const obj = JSON.parse(buffer.trim());
-			if (obj.response) currentMsg += obj.response;
+			if (obj.convo_id) {
+				convoId = obj.convo_id;
+			} else if (obj.response) {
+				currentMsg += obj.response;
+			}
 		}
 		
 		// Add the complete response as a new message
 		messages =  [...messages, '󱚣 > '+currentMsg];
 		loading = false;
 	}
-	
-	onMount(() => {
-		fetchChat('hello!');
-	});
 </script>
 
 <div class="relative">
