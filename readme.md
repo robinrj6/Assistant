@@ -1,7 +1,7 @@
 # Assistant
 Don't think it will do everything for you, but it can chat and generate images for you. Parental advice: be nice so you don't get hunted when AI takes over...
 
-This project use ollama to access any llm for chatting, easy setup is the main reason for choose ollama. For image generation, we use stable diffusion v1.5 which will be downloaded from the diffusers package, you dont need to bother about it. If you want to change the image generation model, change it in line 4 in [sd.py](backend/sd.py), do this only if you have enough GPU VRAM.
+This project use ollama to access any llm for chatting, easy setup is the main reason for choosing ollama. For image generation, we use stable diffusion v1.5 which will be downloaded from the diffusers package, you dont need to bother about it. If you want to change the image generation model, change it in line 4 in [sd.py](backend/sd.py), do this only if you have enough GPU VRAM.
 
 ### Before starting the app:
 1. install ollama from `https://ollama.com/download` according to your platform and install it 
