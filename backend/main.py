@@ -7,13 +7,13 @@ from typing import Optional
 from fastapi import FastAPI, File, Form, UploadFile, Depends
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
-from chat import chat
-from sd import sd
-from schemas import ChatRequest, GenerateRequest
-from controlNetCanny import control_net_Canny
-from db.database import engine, get_db
-from db.models import Base
-from db.crud import save_chat_message, get_chat_history, build_ollama_messages,getChatAllHistory
+from backend.chat import chat
+from backend.sd import sd
+from backend.schemas import ChatRequest, GenerateRequest
+from backend.controlNetCanny import control_net_Canny
+from backend.db.database import engine, get_db
+from backend.db.models import Base
+from backend.db.crud import save_chat_message, get_chat_history, build_ollama_messages,getChatAllHistory
 
 app = FastAPI()
 

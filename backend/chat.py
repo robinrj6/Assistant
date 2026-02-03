@@ -1,5 +1,5 @@
 import requests, json
-from schemas import ChatRequest, ChatResponse
+from backend.schemas import ChatRequest, ChatResponse
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL_NAME = "gemma3:1b"
