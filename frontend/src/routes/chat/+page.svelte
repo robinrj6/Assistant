@@ -7,6 +7,7 @@
 	let convoId: string | null = null;
 	
 	async function fetchChat(prompt: string) {
+		if (!prompt.trim()) return;
 		loading = true;
 		messages = prompt !== 'hello!' ? [...messages,'󱟄 : '+ prompt] : [];
 		let currentMsg = '';
@@ -82,14 +83,17 @@
 	</div>
 
 	<div class="fixed inset-x-0 bottom-0 flex items-center justify-center gap-5 p-4">
+		<button class="border-2 p-4 hover:bg-red"
+			on:click={() => {
+				window.location.reload();
+			}}>New Chat</button>
 		<textarea id="messageInput" placeholder="Type your message..." style="width: 80%; height: 10rem; background-color: #3d0109;"></textarea>
-		<button
+		<button class="border-2 p-4 hover:bg-red"
 			on:click={() => {
 				const input = document.getElementById('messageInput') as HTMLTextAreaElement;
 				fetchChat(input.value);
 				input.value = '';
-			}}>Send</button
-		>
+			}}>Send</button>
 	</div>
 </div>
 
