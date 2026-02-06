@@ -2,4 +2,14 @@ interface ImgGenResponse {
     image_url: string;
 }
 
-export type { ImgGenResponse };
+interface HistoryItem {
+		convo_id: string;
+		role: string;
+		content: string;
+	}
+
+interface HistoryArray {
+        history: HistoryItem[];
+}
+
+export type { ImgGenResponse, HistoryItem, HistoryArray };

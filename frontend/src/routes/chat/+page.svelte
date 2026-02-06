@@ -1,23 +1,22 @@
 <script lang="ts">
-	import { Spinner } from "flowbite-svelte";
-
+	import { Spinner } from 'flowbite-svelte';
 
 	let messages: string[] = [];
 	let loading = false;
 	let convoId: string | null = null;
-	
+
 	async function fetchChat(prompt: string) {
 		if (!prompt.trim()) return;
 		loading = true;
-		messages = prompt !== 'hello!' ? [...messages,'󱟄 : '+ prompt] : [];
+		messages = prompt !== 'hello!' ? [...messages, '󱟄 : ' + prompt] : [];
 		let currentMsg = '';
-		
+
 		const requestBody: any = { prompt };
 		if (convoId) {
 			requestBody.convo_id = convoId;
 		}
 		const bodyStr = JSON.stringify(requestBody);
-		
+
 		const res = await fetch('/chat', {
 			method: 'POST',
 			headers: {
@@ -26,7 +25,10 @@
 			body: bodyStr
 		});
 
-		if (!res.body) { loading = false; return; }
+		if (!res.body) {
+			loading = false;
+			return;
+		}
 
 		const reader = res.body.getReader();
 		const decoder = new TextDecoder();
@@ -62,38 +64,54 @@
 				currentMsg += obj.response;
 			}
 		}
-		
+
 		// Add the complete response as a new message
-		messages =  [...messages, '󱚣 > '+currentMsg];
+		messages = [...messages, '󱚣 > ' + currentMsg];
 		loading = false;
 	}
 </script>
 
 <div class="relative">
 	{#if loading}
-		<div class="pointer-events-none absolute inset-0 flex items-start justify-center pt-4 z-50">
-			<Spinner type="pulse" />		
-		</div>	
+		<div class="pointer-events-none absolute inset-0 z-50 flex items-start justify-center pt-4">
+			<Spinner type="pulse" />
+		</div>
 	{/if}
 
-	<div class="messages-container overflow-y-scroll mb-24 p-4 max-h-[70vh]">
+	<div class="messages-container mb-24 max-h-[70vh] overflow-y-scroll p-4">
 		{#each messages as msg, i (i)}
-			<p class="text-[1.2rem] text-red-500 ">{msg}</p>
+			<p class="text-[1.2rem] text-red-500">{msg}</p>
 		{/each}
 	</div>
 
 	<div class="fixed inset-x-0 bottom-0 flex items-center justify-center gap-5 p-4">
-		<button class="border-2 p-4 hover:bg-red"
+		<div class="flex flex-col gap-2"> 
+		<button
+			class="rounded-md border-2 p-4 hover:bg-red-500 hover:text-black"
 			on:click={() => {
 				window.location.reload();
-			}}>New Chat</button>
-		<textarea id="messageInput" placeholder="Type your message..." style="width: 80%; height: 10rem; background-color: #3d0109;"></textarea>
-		<button class="border-2 p-4 hover:bg-red"
+			}}>New Chat</button
+		>
+		<button
+			class=" z-50 rounded-md border-2 p-2 hover:bg-red-500 hover:text-black"
+			on:click={() => {
+				window.location.href = '/history';
+			}}>History</button
+		>
+		</div>
+		<textarea
+			class="rounded-md border-2 p-4"
+			id="messageInput"
+			placeholder="Type your message..."
+			style="width: 80%; height: 10rem; background-color: #3d0109;"
+		></textarea>
+		<button
+			class="rounded-md border-2 p-4 hover:bg-red-500 hover:text-black"
 			on:click={() => {
 				const input = document.getElementById('messageInput') as HTMLTextAreaElement;
 				fetchChat(input.value);
 				input.value = '';
-			}}>Send</button>
+			}}>Send</button
+		>
 	</div>
 </div>
-
