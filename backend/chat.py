@@ -1,13 +1,12 @@
 import requests, json
-from backend.schemas import ChatRequest, ChatResponse
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL_NAME = "gemma3:1b"
     
-def chat(req: ChatRequest):
+def chat(prompt: str):
     payload = {
         "model": MODEL_NAME,
-        "prompt": req.prompt,
+        "prompt": prompt,
         "stream": True
     }
 

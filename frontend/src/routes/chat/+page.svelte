@@ -1,9 +1,18 @@
 <script lang="ts">
 	import { Spinner } from 'flowbite-svelte';
+	import { onMount } from 'svelte';
 
 	let messages: string[] = [];
 	let loading = false;
 	let convoId: string | null = null;
+
+	onMount(() => {
+		const params = new URLSearchParams(window.location.search);
+		const id = params.get('convo_id');
+		if (id) {
+			convoId = id;
+		}
+	});
 
 	async function fetchChat(prompt: string) {
 		if (!prompt.trim()) return;
@@ -89,6 +98,10 @@
 		<button
 			class="rounded-md border-2 p-4 hover:bg-red-500 hover:text-black"
 			on:click={() => {
+				// clear searchparams in the url to start a new conversation
+				const url = new URL(window.location.href);
+				url.search = '';
+				window.history.replaceState({}, '', url.toString());
 				window.location.reload();
 			}}>New Chat</button
 		>

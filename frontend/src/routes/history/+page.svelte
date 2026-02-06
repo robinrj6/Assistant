@@ -33,7 +33,7 @@
 	});
 
 	const selectItem = (item: HistoryItem) => {
-		selected = item;
+		window.location.href = `/chat?convo_id=${encodeURIComponent(item.convo_id)}`;
 	};
 </script>
 
@@ -60,13 +60,5 @@
 				</li>
 			{/each}
 		</ul>
-	{/if}
-
-	{#if selected}
-		<div class="mt-6 rounded-md border p-4">
-			<h2 class="text-lg font-semibold mb-2">Selected</h2>
-			<div class="text-sm text-gray-500 mb-1">{selected.convo_id}</div>
-			<div class="text-base">{selected.content}</div>
-		</div>
 	{/if}
 </div>

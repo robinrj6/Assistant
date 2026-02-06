@@ -36,9 +36,10 @@ async def get_all_chat_history(db: Session = Depends(get_db)):
     return [{"convo_id": msg.convo_id, "role": msg.role, "content": msg.content} for msg in history]
 
 @app.get("/chat/history/{conversation_id}")
-async def get_chat_history(conversation_id: str):
-    # Placeholder for chat history retrieval logic
-    return {"conversation_id": conversation_id, "messages": []}
+async def get_conversation_history(conversation_id: str, db: Session = Depends(get_db)):
+    messages = get_chat_history(db, conversation_id)
+    return [{"convo_id": msg.convo_id, "role": msg.role, "content": msg.content} for msg in messages]
+    
 
 
 @app.post("/chat")
@@ -51,6 +52,15 @@ async def chat_stream(request: fastapi.Request, ChatRequest: ChatRequest, db: Se
     else:
         convo_id = str(uuid4().hex)
     
+    # Get existing conversation history if convo_id exists
+    history = get_chat_history(db, convo_id)
+    if history:
+        context_lines = [f"{msg.role}: {msg.content}" for msg in history]
+        context_lines.append(f"user: {ChatRequest.prompt}")
+        context_lines.append("assistant:")
+        prompt_for_model = "\n".join(context_lines)
+    else:
+        prompt_for_model = ChatRequest.prompt
 
     save_chat_message(
         db=db,
@@ -64,7 +74,7 @@ async def chat_stream(request: fastapi.Request, ChatRequest: ChatRequest, db: Se
         # Yield convo_id first so client can store it
         yield json.dumps({"convo_id": convo_id}) + "\n"
         
-        for chunk in chat(ChatRequest):
+        for chunk in chat(prompt_for_model):
             chunk_data = json.loads(chunk)
             if "response" in chunk_data:
                 token = chunk_data["response"]
