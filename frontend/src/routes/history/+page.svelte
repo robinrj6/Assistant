@@ -51,10 +51,9 @@
 			{#each history as item (item.convo_id)}
 				<li>
 					<button
-						class="w-full text-left rounded-md border px-3 py-2 hover:bg-red-500 hover:text-black focus:outline-none focus:ring"
+						class="text-left rounded-md border px-3 py-2 hover:bg-red-500 hover:text-black focus:outline-none focus:ring"
 						on:click={() => selectItem(item)}
 					>
-						<div class="text-sm text-gray-500">{item.convo_id}</div>
 						<div class="text-base">{item.content}</div>
 					</button>
 				</li>
